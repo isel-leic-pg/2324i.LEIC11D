@@ -18,6 +18,10 @@ fun main() {
         }
         val cv2 = Canvas(100,100, BLACK)
         cv2.drawLine(0,0,cv2.width-1,cv2.height-1, YELLOW,4)
+        cv2.onMouseDown {
+            cv.erase()
+            cv.drawFlag()
+        }
     }
     onFinish {
         println("Bye.")
