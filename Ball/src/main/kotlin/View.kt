@@ -13,5 +13,10 @@ fun Canvas.drawBall(ball: Ball) {
     val x = ball.center.x
     val y = ball.center.y
     drawCircle(x, y, BALL_RADIUS, GREEN)
-    drawLine(x,y, x+ball.dx* VECTOR_FACTOR, y+ball.dy* VECTOR_FACTOR, RED, VECTOR_THICKNESS)
+    drawLine(
+        xFrom= x, yFrom = y,
+        xTo = x+ball.speed.dx* VECTOR_FACTOR,
+        yTo = y+ball.speed.dy* VECTOR_FACTOR,
+        RED, VECTOR_THICKNESS
+    )
 }

@@ -17,7 +17,7 @@ const val FRAME_TIME = 20 // milliseconds
  */
 fun main() {
     onStart {
-        var ball = Ball(Point(WIDTH/2,HEIGHT/2),0,0)
+        var ball = Ball(Point(WIDTH/2,HEIGHT/2))
         val cv = Canvas(WIDTH,HEIGHT, WHITE)
         cv.drawBall(ball)
         cv.onKeyPressed { ke ->
@@ -25,7 +25,7 @@ fun main() {
             cv.drawBall(ball)
         }
         cv.onMouseDown { me ->
-            ball = Ball(Point(me.x,me.y).coerce(),0,0)
+            ball = Ball(Point(me.x,me.y).coerce())
             cv.drawBall(ball)
         }
         cv.onTimeProgress(FRAME_TIME) {
@@ -44,12 +44,9 @@ fun main() {
  */
 private fun processKey(ke: KeyEvent, ball: Ball) =
     when(ke.code) {
-        'G'.code -> Ball(ball.center,
-            dx = (-MAX_VELOCITY..MAX_VELOCITY).random(),
-            dy = (-MAX_VELOCITY..MAX_VELOCITY).random()
-        )
+        'G'.code -> ball.copy(speed = randomSpeed())
         'D'.code -> ball.startDrop()
-        else -> Ball(moveByKey(ke.code, ball.center).coerce(), 0, 0)
+        else -> Ball(moveByKey(ke.code, ball.center).coerce())
     }
 
 
