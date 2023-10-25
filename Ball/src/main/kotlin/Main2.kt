@@ -1,45 +1,31 @@
 import pt.isel.canvas.*
 
+/**
+ * Main function of the application.
+ * Shows several balls moving with random initial speed.
+ * Each ball disappears when clicked with the mouse.
+ * The application ends when there are no balls left.
+ */
 fun main() {
     onStart {
-        var ball = Ball(Point(WIDTH/2,HEIGHT/2),randomSpeed())
+        var allBalls = List(10) {
+            Ball(Point(WIDTH/2,HEIGHT/2),randomSpeed())
+        }
         val cv = Canvas(WIDTH,HEIGHT, WHITE)
+        cv.drawBalls(allBalls)
         cv.onMouseDown { me ->
-            ball = ball.stopIfTouched(Point(me.x,me.y))
-            cv.drawBall(ball)
+            //allBalls = allBalls.map { it.stopIfTouched(Point(me.x,me.y)) }
+            allBalls = allBalls.filter {
+                ! it.touched(Point(me.x,me.y))
+            }
+            if (allBalls.isEmpty()) cv.close()
+            cv.drawBalls(allBalls)
         }
         cv.onTimeProgress(FRAME_TIME) {
-            ball = ball.move()
-            cv.drawBall(ball)
+            allBalls = allBalls.map { it.move() }
+            cv.drawBalls(allBalls)
         }
     }
     onFinish {  }
 }
 
-/**
- * Processes a key event.
- * @param ke the key event to process.
- * @param ball the ball to move.
- * @return the ball in the new position and velocity.
- */
-private fun processKey(ke: KeyEvent, ball: Ball) =
-    when(ke.code) {
-        'G'.code -> ball.copy(speed = randomSpeed())
-        'D'.code -> ball.startDrop()
-        else -> Ball(moveByKey(ke.code, ball.center).coerce())
-    }
-
-
-/**
- * Moves the ball center according to the cursor key pressed
- * @param key the code of the key pressed.
- * @param b the center of the ball.
- * @return the new center of the ball.
- */
-private fun moveByKey(key: Int, b: Point): Point = when (key) {
-    LEFT_CODE -> Point(b.x - BALL_DELTA, b.y)
-    RIGHT_CODE -> Point(b.x + BALL_DELTA, b.y)
-    UP_CODE -> Point(b.x, b.y - BALL_DELTA)
-    DOWN_CODE -> Point(b.x, b.y + BALL_DELTA)
-    else -> b
-}

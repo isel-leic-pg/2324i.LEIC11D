@@ -45,8 +45,19 @@ fun Point.coerce() =
  */
 operator fun Point.plus(speed: Speed) = Point(x+speed.dx, y+speed.dy)
 
+/**
+ * Computes de the power of 2 of an integer.
+ * @receiver the integer to compute the power of 2.
+ * @return the power of 2 of the integer.
+ */
 fun Int.pow2() = this * this
 
+/**
+ * Computes the distance between two points.
+ * @receiver the first point.
+ * @param p the second point.
+ * @return the distance between the two points.
+ */
 fun Point.distanceTo(p: Point): Double {
     val a = (y - p.y)
     val b = (x - p.x)

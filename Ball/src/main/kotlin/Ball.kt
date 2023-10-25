@@ -24,9 +24,8 @@ private const val LOSS_VELOCITY = 0.85
 
 /**
  * Moves the ball according to its properties.
- * The ball bounces when it reaches the canvas limits.
- * In drop mode the ball has a uniform accelerated movement.
- * In drop mode the ball loses velocity when it bounces at bottom.
+ * In "drop" mode the ball falls vertically, bouncing until it stabilizes on the ground.
+ * In "free" mode the ball reflects when it collides with vertical or horizontal limits.
  * @receiver the ball to move.
  * @return the ball in the new position.
  */
@@ -36,6 +35,10 @@ fun Ball.move() = when {
     else -> moveFree()
 }
 
+/**
+ * Moves the ball freely (without drop).
+ * Reflects without losing speed when it collides with vertical or horizontal limits.
+ */
 fun Ball.moveFree(): Ball {
     val newSpeed = Speed(
         if (verticalCollision()) -speed.dx else speed.dx,
@@ -44,23 +47,29 @@ fun Ball.moveFree(): Ball {
     return copy(center = center + newSpeed, speed = newSpeed)
 }
 
+/**
+ * Returns true if the ball collides with a horizontal limit.
+ */
 private fun Ball.horizontalCollision() =
     center.y + speed.dy !in MIN_Y..MAX_Y
 
+/**
+ * Returns true if the ball collides with a vertical limit.
+ */
 private fun Ball.verticalCollision() =
     center.x + speed.dx !in MIN_X..MAX_X
 
 /**
- * This function must be decomposed into two simpler functions:
- * - moveDrop: One that only moves when drop.
- * - moveFree: Another that moves freely (without drop)
+ * Moves the ball in drop mode.
+ * Moves in a uniform accelerated vertical movement.
+ * The reflection in the ground loss some velocity.
  */
 fun Ball.moveDrop(): Ball {
     val newDy = speed.dy + ACCELERATION_Y
     val speed = Speed(
         speed.dx,
         if (center.y+newDy > MAX_Y)
-                (-speed.dy* LOSS_VELOCITY).toInt()
+            (-speed.dy * LOSS_VELOCITY).toInt()
         else newDy
     )
     return copy(center = center + speed, speed = speed)
@@ -74,7 +83,18 @@ fun Ball.moveDrop(): Ball {
  */
 fun Ball.startDrop(): Ball = copy(drop= true)
 
+/**
+ * Stops the ball if the mouse click is inside the ball.
+ * @receiver the current ball maybe stopped.
+ * @param click The mouse click
+ * @return The ball stopped or the current ball.
+ */
 fun Ball.stopIfTouched(click: Point): Ball =
-    if (center.distanceTo(click) <= BALL_RADIUS)
-        copy(speed=Speed(0,0))
+    if (touched(click)) copy(speed=Speed(0,0))
     else this
+
+/**
+ * Returns true if the mouse click is inside the ball.
+ */
+fun Ball.touched(click: Point) =
+    center.distanceTo(click) <= BALL_RADIUS
