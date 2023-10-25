@@ -1,6 +1,6 @@
 
 // The ball properties
-const val BALL_RADIUS = 100
+const val BALL_RADIUS = 20
 const val BALL_DELTA = 15
 const val MIN_X = BALL_RADIUS
 const val MAX_X = WIDTH - BALL_RADIUS
@@ -32,26 +32,38 @@ private const val LOSS_VELOCITY = 0.85
  */
 fun Ball.move() = when {
     speed.isZero() && !drop -> this
-    drop -> moveFree() //moveDrop()
+    drop -> moveDrop()
     else -> moveFree()
 }
 
+fun Ball.moveFree(): Ball {
+    val newSpeed = Speed(
+        if (verticalCollision()) -speed.dx else speed.dx,
+        if (horizontalCollision()) -speed.dy else speed.dy
+    )
+    return copy(center = center + newSpeed, speed = newSpeed)
+}
+
+private fun Ball.horizontalCollision() =
+    center.y + speed.dy !in MIN_Y..MAX_Y
+
+private fun Ball.verticalCollision() =
+    center.x + speed.dx !in MIN_X..MAX_X
+
 /**
- * TODO: Function must be decomposed.
  * This function must be decomposed into two simpler functions:
  * - moveDrop: One that only moves when drop.
  * - moveFree: Another that moves freely (without drop)
  */
-fun Ball.moveFree(): Ball {
-    var newDy = if (drop) speed.dy+ACCELERATION_Y else speed.dy
-    if (center.y+newDy < MIN_Y || center.y+newDy > MAX_Y) newDy=-speed.dy
-    if (drop && speed.dy>0 && newDy<0)
-        newDy = (newDy * LOSS_VELOCITY).toInt()
-    val newDx = if (center.x+speed.dx < MIN_X || center.x+speed.dx > MAX_X) -speed.dx else speed.dx
-    return copy(
-        center = Point(center.x + newDx, center.y + newDy),
-        speed = Speed(newDx,newDy)
+fun Ball.moveDrop(): Ball {
+    val newDy = speed.dy + ACCELERATION_Y
+    val speed = Speed(
+        speed.dx,
+        if (center.y+newDy > MAX_Y)
+                (-speed.dy* LOSS_VELOCITY).toInt()
+        else newDy
     )
+    return copy(center = center + speed, speed = speed)
 }
 
 /**
@@ -61,3 +73,8 @@ fun Ball.moveFree(): Ball {
  * @return the ball with the drop movement started.
  */
 fun Ball.startDrop(): Ball = copy(drop= true)
+
+fun Ball.stopIfTouched(click: Point): Ball =
+    if (center.distanceTo(click) <= BALL_RADIUS)
+        copy(speed=Speed(0,0))
+    else this

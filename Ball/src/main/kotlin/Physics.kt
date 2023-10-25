@@ -1,3 +1,5 @@
+import kotlin.math.*
+
 /**
  * Represents a point in the canvas.
  * @property x the horizontal coordinate. (0 is the leftmost position)
@@ -41,4 +43,12 @@ fun Point.coerce() =
  * @param speed the speed vector to add.
  * @return the new point after adding the speed vector.
  */
-fun Point.plus(speed: Speed) = Point(x+speed.dx, y+speed.dy)
+operator fun Point.plus(speed: Speed) = Point(x+speed.dx, y+speed.dy)
+
+fun Int.pow2() = this * this
+
+fun Point.distanceTo(p: Point): Double {
+    val a = (y - p.y)
+    val b = (x - p.x)
+    return sqrt((a.pow2() + b.pow2()).toDouble())
+}
