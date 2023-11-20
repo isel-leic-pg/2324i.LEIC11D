@@ -55,11 +55,6 @@ fun readBet() = Bet(
  * Checks if all the values are in the range [1..max].
  */
 fun List<Int>.valuesIn(max: Int) = all { it in 1..max }
-/*  forEach { value ->     //for(value in this) {
-        if (value !in 1..max) return false
-    }
-    return true
-*/
 
 /**
  * Checks if the bet is valid:
@@ -78,18 +73,6 @@ fun Bet.isValid(): Boolean =
  * Checks if the list has no repetitions.
  */
 fun List<Int>.noRepeats(): Boolean = distinct().size == size
-/*  for (v in this) {
-        if (v in (this - v)) return false
-    }
-    return true
-*/
-/*  for(idx in 0..size-2) {
-        val v = this[idx]
-        for(idx2 in idx+1..<size)
-            if (this[idx2]==v) return false
-    }
-    return true
-*/
 
 /**
  * Reads a valid bet from the console.
@@ -101,15 +84,21 @@ fun readValidBet(): Bet {
         if (bet.isValid()) return bet
         println("Invalid bet")
     }
-/*  var bet: Bet
-    do {
-        bet = readBet()
-    } while( ! bet.isValid() )
-    return bet  */
 }
 
+/**
+ * Gets the prize for the bet with the given key.
+ * The key is randomly generated.
+ * The bet is read from the console.
+ */
 fun main() {
-    //println( listOf(3,5,9,5,2).noRepeats() )
-    repeat(10) { println(createRandomSimpleBet()) }
-    println(readValidBet())
+    val key = /*Bet(listOf(4, 15, 33, 46, 49), listOf(2, 8) )*/ createRandomSimpleBet()
+    println("Chave = $key")
+    val bet = /*Bet(listOf(4, 15, 30, 46, 48), listOf(1, 8) )*/ readValidBet()
+    println("Aposta = $bet")
+    val prize = bet.getPrizeFor(key)
+    println(prize)
+    val prizeNumber = numberOf(prize)
+    if (prizeNumber!=null)
+        println("Ganhou o ${prizeNumber}º prémio")
 }
