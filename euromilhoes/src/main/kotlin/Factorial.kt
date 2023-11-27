@@ -1,4 +1,7 @@
-
+/**
+ * Computes the factorial of a number.
+ * Iterative version.
+ */
 fun factI(n: Int): Int {
     var res = 1
     for(nn in 1..n)
@@ -6,10 +9,21 @@ fun factI(n: Int): Int {
     return res
 }
 
+/**
+ * Computes the factorial of a number.
+ * Iterative version using reduce.
+ */
 fun fact2I(n: Int) = (1..n).reduce{ acc, i -> acc*i }
 
-fun fact(n: Int): Long =
-    if (n<=1) 1 else fact(n-1)*n
+/**
+ * Computes the factorial of a number.
+ * Recursive version.
+ */
+fun fact(n: Int): Long {
+    if (n <= 1)
+        return 1
+    return n * fact(n - 1)
+}
 
 fun main() {
     println(fact(10))

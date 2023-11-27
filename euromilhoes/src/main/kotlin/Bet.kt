@@ -79,11 +79,17 @@ fun List<Int>.noRepeats(): Boolean = distinct().size == size
  * Repeat the read until the bet is valid.
  */
 fun readValidBet(): Bet {
+    val bet = readBet()
+    if (bet.isValid()) return bet
+    println("Invalid bet")
+    return readValidBet()
+/*
     while(true) {
         val bet = readBet()
         if (bet.isValid()) return bet
         println("Invalid bet")
     }
+*/
 }
 
 /**
