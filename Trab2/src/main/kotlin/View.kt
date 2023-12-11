@@ -70,6 +70,10 @@ fun Canvas.drawGame(game: Game) {
     drawMan(game.man)
 }
 
+val manWalkingRight = listOf(
+    Sprite(0,3,2), Sprite(0,4,2), Sprite(0,3,2), Sprite(0,2,2)
+)
+
 /**
  * Draws the man in canvas according to the direction he is facing.
  */
